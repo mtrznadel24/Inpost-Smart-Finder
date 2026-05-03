@@ -9,3 +9,4 @@ app = FastAPI(
 @app.get("/")
 def health_check():
     return {"status": "ok", "message": "InPost Smart Finder API is running!"}
+
