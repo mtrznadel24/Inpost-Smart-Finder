@@ -1,0 +1,50 @@
+import contextlib
+from typing import Annotated, AsyncIterator
+
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import DeclarativeBase
+
+from app.core.config import settings
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class DBSessionManager:
+    def __init__(self, host: str, **kwargs):
+        self._engine = create_async_engine(host, **kwargs)
+        self._sessionmaker = async_sessionmaker(
+            autocommit=False, autoflush=False, bind=self._engine
+        )
+
+    @contextlib.asynccontextmanager
+    async def session(self) -> AsyncIterator[AsyncSession]:
+        session = self._sessionmaker()
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
+
+    @property
+    def engine(self):
+        return self._engine
+
+
+session_manager = DBSessionManager(settings.async_database_url, echo=False)
+
+
+async def get_db() -> AsyncIterator[AsyncSession]:
+    async with session_manager.session() as session:
+        yield session
+
+
+DbSessionDep = Annotated[AsyncSession, Depends(get_db)]

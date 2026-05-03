@@ -1,9 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy.dialects.postgresql import ARRAY
 from geoalchemy2 import Geography
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy.dialects.postgresql import ARRAY
 
-Base = declarative_base()
+from app.core.database import Base
 
 
 class ParcelLocker(Base):
@@ -25,4 +24,4 @@ class ParcelLocker(Base):
 
     functions = Column(ARRAY(String))
 
-    location = Column(Geography(geometry_type='POINT', srid=4326))
+    location = Column(Geography(geometry_type="POINT", srid=4326))
