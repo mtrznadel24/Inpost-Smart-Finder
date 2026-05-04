@@ -16,7 +16,7 @@ async def fetch_and_save_inpost_data(ctx=None):
     """
     url = settings.INPOST_API_URL
 
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=30.0) as client:
         page = 1
         while True:
             response = await client.get(url, params={"page": page, "per_page": 500})
