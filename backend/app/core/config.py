@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
     INPOST_API_URL: str = "https://api-global-points.easypack24.net/v1/points"
     LOG_LEVEL: str = "INFO"
+    API_V1_STR: str = "/api/v1"
 
     @property
     def async_database_url(self) -> str:
