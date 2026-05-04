@@ -1,10 +1,14 @@
+import logging
+
+import arq
 from arq.connections import RedisSettings
 from app.lockers.sync_service import fetch_and_save_inpost_data
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
 
 async def startup(ctx):
-    print("Worker started! Fetching and saving InPost data...")
+    logger.info("Worker started! Fetching and saving InPost data...")
     await ctx['arq_pool'].enqueue_job('fetch_and_save_inpost_data')
 
 

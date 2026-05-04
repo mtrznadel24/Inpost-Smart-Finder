@@ -1,3 +1,5 @@
+import logging
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,6 +11,8 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int = 5432
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
+    INPOST_API_URL: str = "https://api-global-points.easypack24.net/v1/points"
+    LOG_LEVEL: str = "INFO"
 
     @property
     def async_database_url(self) -> str:
@@ -22,5 +26,9 @@ class Settings(BaseSettings):
         env_file=("../.env", ".env"), env_file_encoding="utf-8", extra="ignore"
     )
 
-
 settings = Settings()
+
+logging.basicConfig(
+    level=settings.LOG_LEVEL.upper(),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
