@@ -23,6 +23,7 @@ arq = "^0.28.0"
 ruff = "^0.15.12"
 pytest = "^8.2.0"
 pytest-asyncio = "^0.23.6"
+respx = "^0.23.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -41,4 +42,10 @@ testpaths = ["tests"]
 pythonpath = ["."]
 filterwarnings = [
     "ignore::DeprecationWarning",
+]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "-ra",
 ]

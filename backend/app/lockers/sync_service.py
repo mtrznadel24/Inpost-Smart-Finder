@@ -2,6 +2,7 @@ import logging
 
 import httpx
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.lockers.models import ParcelLocker
@@ -28,7 +29,8 @@ async def fetch_and_save_inpost_data(ctx=None):
             if not lockers:
                 break
 
-            await save_to_db(lockers)
+            async with session_manager.session() as db:
+                await save_to_db(lockers, db)
 
             if page >= data.get("total_pages", 0):
                 break
@@ -37,48 +39,47 @@ async def fetch_and_save_inpost_data(ctx=None):
     logger.info("InPost data fetched and saved to the database.")
 
 
-async def save_to_db(lockers):
-    async with session_manager.session() as db:
-        for locker in lockers:
-            try:
-                validated_data = ParcelLockerCreate(
-                    name=locker["name"],
-                    city=locker["address_details"]["city"],
-                    address=f"{locker['address_details']['street']} {locker['address_details']['building_number']}",
-                    description=locker.get("location_description"),
-                    image_url=locker.get("image_url"),
-                    status=locker["status"],
-                    physical_type=locker.get("physical_type", "other"),
-                    is_24_7=locker.get("location_247", True),
-                    easy_access_zone=locker.get("easy_access_zone", False),
-                    payment_available=locker.get("payment_available", False),
-                    functions=locker.get("functions", []),
-                    longitude=locker["location"]["longitude"],
-                    latitude=locker["location"]["latitude"]
-                )
-            except Exception as e:
-                logger.warning(f"Error validating locker {locker.get('name')}: {e}")
-                continue
-
-            db_values = validated_data.model_dump(exclude={"longitude", "latitude"})
-
-            db_values["location"] = f"POINT({validated_data.longitude} {validated_data.latitude})"
-
-            stmt = insert(ParcelLocker).values(**db_values)
-
-            update_dict = {
-                "status": validated_data.status,
-                "is_24_7": validated_data.is_24_7,
-                "easy_access_zone": validated_data.easy_access_zone,
-                "payment_available": validated_data.payment_available,
-                "functions": validated_data.functions,
-                "description": validated_data.description
-            }
-
-            stmt = stmt.on_conflict_do_update(
-                index_elements=['name'],
-                set_=update_dict
+async def save_to_db(lockers, db: AsyncSession):
+    for locker in lockers:
+        try:
+            validated_data = ParcelLockerCreate(
+                name=locker["name"],
+                city=locker["address_details"]["city"],
+                address=f"{locker['address_details']['street']} {locker['address_details']['building_number']}",
+                description=locker.get("location_description"),
+                image_url=locker.get("image_url"),
+                status=locker["status"],
+                physical_type=locker.get("physical_type", "other"),
+                is_24_7=locker.get("location_247", True),
+                easy_access_zone=locker.get("easy_access_zone", False),
+                payment_available=locker.get("payment_available", False),
+                functions=locker.get("functions", []),
+                longitude=locker["location"]["longitude"],
+                latitude=locker["location"]["latitude"]
             )
+        except Exception as e:
+            logger.warning(f"Error validating locker {locker.get('name')}: {e}")
+            continue
 
-            await db.execute(stmt)
-        await db.commit()
+        db_values = validated_data.model_dump(exclude={"longitude", "latitude"})
+
+        db_values["location"] = f"POINT({validated_data.longitude} {validated_data.latitude})"
+
+        stmt = insert(ParcelLocker).values(**db_values)
+
+        update_dict = {
+            "status": validated_data.status,
+            "is_24_7": validated_data.is_24_7,
+            "easy_access_zone": validated_data.easy_access_zone,
+            "payment_available": validated_data.payment_available,
+            "functions": validated_data.functions,
+            "description": validated_data.description
+        }
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=['name'],
+            set_=update_dict
+        )
+
+        await db.execute(stmt)
+    await db.commit()

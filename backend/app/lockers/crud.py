@@ -1,6 +1,8 @@
 from sqlalchemy import select, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from geoalchemy2.functions import ST_X, ST_Y, ST_MakeEnvelope
+from sqlalchemy import cast
+from geoalchemy2 import Geometry
 
 from app.lockers.models import ParcelLocker
 from app.lockers.schemas import LockerQueryParams
@@ -21,10 +23,10 @@ async def get_lockers_in_bbox(db: AsyncSession, params: LockerQueryParams):
         ParcelLocker.name,
         ParcelLocker.status,
         ParcelLocker.physical_type,
-        ST_X(ParcelLocker.location).label("longitude"),
-        ST_Y(ParcelLocker.location).label("latitude")
+        ST_X(cast(ParcelLocker.location, Geometry)).label("longitude"),
+        ST_Y(cast(ParcelLocker.location, Geometry)).label("latitude")
     ).where(
-        func.ST_Within(ParcelLocker.location, bbox_filter)
+        func.ST_Within(cast(ParcelLocker.location, Geometry), bbox_filter)
     )
 
     if params.is_24_7 is not None:
@@ -68,8 +70,8 @@ async def get_locker_by_id(db: AsyncSession, locker_id: int):
         ParcelLocker.easy_access_zone,
         ParcelLocker.payment_available,
         ParcelLocker.functions,
-        ST_X(ParcelLocker.location).label("longitude"),
-        ST_Y(ParcelLocker.location).label("latitude")
+        ST_X(cast(ParcelLocker.location, Geometry)).label("longitude"),
+        ST_Y(cast(ParcelLocker.location, Geometry)).label("latitude")
     ).where(ParcelLocker.id == locker_id)
 
     result = await db.execute(query)
