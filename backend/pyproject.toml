@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Backend API for spatial filtering of InPost parcel lockers"
 authors = ["mtrznadel24 <maciej.trznadel24@gmail.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -20,6 +21,8 @@ arq = "^0.28.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.15.12"
+pytest = "^8.2.0"
+pytest-asyncio = "^0.23.6"
 
 [build-system]
 requires = ["poetry-core"]
@@ -31,3 +34,11 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
