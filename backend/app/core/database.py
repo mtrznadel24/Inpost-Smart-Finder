@@ -4,6 +4,7 @@ from typing import Annotated, AsyncIterator
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
+    AsyncConnection,
     async_sessionmaker,
     create_async_engine,
 )
@@ -22,6 +23,20 @@ class DBSessionManager:
         self._sessionmaker = async_sessionmaker(
             autocommit=False, autoflush=False, bind=self._engine
         )
+
+    async def close(self):
+        await self._engine.dispose()
+        self._engine = None
+        self._sessionmaker = None
+
+    @contextlib.asynccontextmanager
+    async def connect(self) -> AsyncIterator[AsyncConnection]:
+        async with self._engine.connect() as conn:
+            try:
+                yield conn
+            except Exception:
+                raise
+
 
     @contextlib.asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:
