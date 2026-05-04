@@ -17,6 +17,10 @@ async def sample_locker(db_session: AsyncSession) -> ParcelLocker:
         city="Warszawa",
         address="Testowa 1",
         status="Operating",
+        physical_type="newfm",
+        easy_access_zone=True,
+        payment_available=True,
+        functions=["parcel_collect"],
         is_24_7=True,
         location=WKTElement("POINT(21.0122 52.2297)", srid=4326)
     )
@@ -110,3 +114,61 @@ async def test_get_lockers_in_scope_validation_error(client: AsyncClient):
     response = await client.get(url, params={})
 
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_get_lockers_in_scope_filter_excludes_result(client: AsyncClient, sample_locker: ParcelLocker):
+    """
+    Test if providing an additional filter (is_24_7=False) correctly excludes
+    a locker that is geographically in scope, but logically doesn't match.
+    """
+    url = f"{settings.API_V1_STR}/lockers/in-scope"
+    response = await client.get(
+        url,
+        params={
+            "min_lat": 52.0,
+            "max_lat": 53.0,
+            "min_lon": 20.0,
+            "max_lon": 22.0,
+            "is_24_7": False
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 0
+
+
+@pytest.mark.asyncio
+async def test_get_lockers_in_scope_limit_works(client: AsyncClient, db_session: AsyncSession):
+    """
+    Test if the 'limit' parameter correctly truncates the number of returned records.
+    """
+    for i in range(2):
+        locker = ParcelLocker(
+            name=f"WAW0{i}A",
+            city="Warszawa",
+            address="Testowa 1",
+            status="Operating",
+            location=WKTElement("POINT(21.0122 52.2297)", srid=4326)
+        )
+        db_session.add(locker)
+    await db_session.commit()
+
+    url = f"{settings.API_V1_STR}/lockers/in-scope"
+    response = await client.get(
+        url,
+        params={
+            "min_lat": 52.0,
+            "max_lat": 53.0,
+            "min_lon": 20.0,
+            "max_lon": 22.0,
+            "limit": 1
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) == 1

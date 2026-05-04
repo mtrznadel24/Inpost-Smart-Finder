@@ -1,5 +1,6 @@
 import logging
 
+import contextlib
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -8,18 +9,21 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.pool import NullPool
 
 from app.core.config import settings
-from app.core.database import Base, DBSessionManager, get_db
+from app.core.database import Base, DBSessionManager, get_db, session_manager
 from app.main import app
 
-TEST_DATABASE_URL = str(settings.async_database_url).replace(
-    "smart_finder_db", "smart_finder_test_db"
-)
+TEST_DATABASE_URL = str(settings.async_database_url)\
+    .replace("smart_finder_db", "smart_finder_test_db")\
+    .replace("@db:", "@localhost:")
 
 test_session_manager = DBSessionManager(
     TEST_DATABASE_URL,
     poolclass=NullPool,
     echo=False,
 )
+
+session_manager._engine = test_session_manager._engine
+session_manager._sessionmaker = test_session_manager._sessionmaker
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -56,9 +60,17 @@ async def db_session():
         trans = await conn.begin()
         async_session = AsyncSession(bind=conn, expire_on_commit=False)
 
+        @contextlib.asynccontextmanager
+        async def mock_session():
+            yield async_session
+
+        original_session = session_manager.session
+        session_manager.session = mock_session
+
         try:
             yield async_session
         finally:
+            session_manager.session = original_session
             await async_session.close()
             if trans.is_active:
                 await trans.rollback()
