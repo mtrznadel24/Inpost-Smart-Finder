@@ -1,12 +1,14 @@
 import logging
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 class Settings(BaseSettings):
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "postgres"
+    POSTGRES_DB: str = "smart_finder_db"
     POSTGRES_HOST: str = "localhost"
     POSTGRES_PORT: int = 5432
     REDIS_HOST: str = "localhost"
@@ -24,7 +26,7 @@ class Settings(BaseSettings):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
     model_config = SettingsConfigDict(
-        env_file=("../.env", ".env"), env_file_encoding="utf-8", extra="ignore"
+        env_file=str(BASE_DIR / ".env"), env_file_encoding="utf-8", extra="ignore"
     )
 
 settings = Settings()
