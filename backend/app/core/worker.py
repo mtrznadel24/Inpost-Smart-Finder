@@ -9,7 +9,12 @@ logger = logging.getLogger(__name__)
 
 async def startup(ctx):
     logger.info("Worker started! Fetching and saving InPost data...")
-    await ctx['arq_pool'].enqueue_job('fetch_and_save_inpost_data')
+
+    redis = await arq.create_pool(WorkerSettings.redis_settings)
+
+    await redis.enqueue_job('fetch_and_save_inpost_data')
+
+    await redis.close()
 
 
 class WorkerSettings:
@@ -19,6 +24,8 @@ class WorkerSettings:
     )
 
     functions = [fetch_and_save_inpost_data]
+
+    job_timeout = 3600
 
     on_startup = startup
 
