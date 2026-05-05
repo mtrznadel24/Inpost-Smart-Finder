@@ -1,4 +1,4 @@
-import { MapBounds } from './types';
+import type { MapBounds } from './types';
 
 export const lockerKeys = {
   all: ['lockers'] as const,

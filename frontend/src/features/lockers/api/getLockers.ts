@@ -1,5 +1,5 @@
 import { apiClient } from '@/api/client';
-import { Locker, MapBounds } from '../types';
+import type { Locker, MapBounds } from '../types';
 
 export async function getLockers(bounds: MapBounds | null): Promise<Locker[]> {
   if (!bounds) return [];
