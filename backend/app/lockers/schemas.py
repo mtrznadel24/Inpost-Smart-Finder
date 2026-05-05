@@ -30,6 +30,7 @@ class ParcelLockerCreate(BaseModel):
     longitude: float
     latitude: float
 
+
 class ParcelLockerResponse(BaseModel):
     id: int
     name: str
@@ -43,6 +44,7 @@ class ParcelLockerResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ParcelLockerDetailsResponse(ParcelLockerCreate):
     id: int
 
@@ -52,21 +54,40 @@ class ParcelLockerDetailsResponse(ParcelLockerCreate):
 
 class LockerQueryParams:
     def __init__(
-            self,
-            min_lat: float = Query(..., description="Southern boundary of the map bounding box"),
-            max_lat: float = Query(..., description="Northern boundary of the map bounding box"),
-            min_lon: float = Query(..., description="Western boundary of the map bounding box"),
-            max_lon: float = Query(..., description="Eastern boundary of the map bounding box"),
-
-            is_24_7: Optional[bool] = Query(None, description="Filter by 24/7 availability"),
-            payment_available: Optional[bool] = Query(None, description="Filter by payment availability"),
-            easy_access_zone: Optional[bool] = Query(None, description="Filter by easy access zone"),
-            status: Optional[str] = Query(None, description="Filter by status (e.g., Operating)"),
-            physical_type: Optional[PhysicalTypeEnum] = Query(None, description="Filter by locker physical type"),
-
-            function: Optional[str] = Query(None, description="Filter by specific function"),
-
-            limit: int = Query(500, ge=1, le=2000, description="Maximum number of results to return")
+        self,
+        min_lat: float = Query(
+            ..., description="Southern boundary of the map bounding box"
+        ),
+        max_lat: float = Query(
+            ..., description="Northern boundary of the map bounding box"
+        ),
+        min_lon: float = Query(
+            ..., description="Western boundary of the map bounding box"
+        ),
+        max_lon: float = Query(
+            ..., description="Eastern boundary of the map bounding box"
+        ),
+        is_24_7: Optional[bool] = Query(
+            None, description="Filter by 24/7 availability"
+        ),
+        payment_available: Optional[bool] = Query(
+            None, description="Filter by payment availability"
+        ),
+        easy_access_zone: Optional[bool] = Query(
+            None, description="Filter by easy access zone"
+        ),
+        status: Optional[str] = Query(
+            None, description="Filter by status (e.g., Operating)"
+        ),
+        physical_type: Optional[PhysicalTypeEnum] = Query(
+            None, description="Filter by locker physical type"
+        ),
+        function: Optional[str] = Query(
+            None, description="Filter by specific function"
+        ),
+        limit: int = Query(
+            500, ge=1, le=2000, description="Maximum number of results to return"
+        ),
     ):
         self.min_lat = min_lat
         self.max_lat = max_lat

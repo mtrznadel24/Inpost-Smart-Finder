@@ -3,8 +3,8 @@ from typing import Annotated, AsyncIterator
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import (
-    AsyncSession,
     AsyncConnection,
+    AsyncSession,
     async_sessionmaker,
     create_async_engine,
 )
@@ -36,7 +36,6 @@ class DBSessionManager:
                 yield conn
             except Exception:
                 raise
-
 
     @contextlib.asynccontextmanager
     async def session(self) -> AsyncIterator[AsyncSession]:

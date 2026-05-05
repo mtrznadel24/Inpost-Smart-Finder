@@ -22,7 +22,7 @@ async def sample_locker(db_session: AsyncSession) -> ParcelLocker:
         payment_available=True,
         functions=["parcel_collect"],
         is_24_7=True,
-        location=WKTElement("POINT(21.0122 52.2297)", srid=4326)
+        location=WKTElement("POINT(21.0122 52.2297)", srid=4326),
     )
     db_session.add(locker)
     await db_session.commit()
@@ -31,7 +31,9 @@ async def sample_locker(db_session: AsyncSession) -> ParcelLocker:
 
 
 @pytest.mark.asyncio
-async def test_get_locker_details_success(client: AsyncClient, sample_locker: ParcelLocker):
+async def test_get_locker_details_success(
+    client: AsyncClient, sample_locker: ParcelLocker
+):
     """
     Test if we can fetch details of a specific locker and if PostGIS
     correctly converts the location to longitude and latitude.
@@ -61,20 +63,16 @@ async def test_get_locker_details_not_found(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_get_lockers_in_scope_found(client: AsyncClient, sample_locker: ParcelLocker):
+async def test_get_lockers_in_scope_found(
+    client: AsyncClient, sample_locker: ParcelLocker
+):
     """
     Test if the Bounding Box filter successfully finds a locker inside its area.
     (Bounding box coordinates created around Warsaw).
     """
     url = f"{settings.API_V1_STR}/lockers/in-scope"
     response = await client.get(
-        url,
-        params={
-            "min_lat": 52.0,
-            "max_lat": 53.0,
-            "min_lon": 20.0,
-            "max_lon": 22.0
-        }
+        url, params={"min_lat": 52.0, "max_lat": 53.0, "min_lon": 20.0, "max_lon": 22.0}
     )
 
     assert response.status_code == 200
@@ -85,20 +83,16 @@ async def test_get_lockers_in_scope_found(client: AsyncClient, sample_locker: Pa
 
 
 @pytest.mark.asyncio
-async def test_get_lockers_in_scope_not_found(client: AsyncClient, sample_locker: ParcelLocker):
+async def test_get_lockers_in_scope_not_found(
+    client: AsyncClient, sample_locker: ParcelLocker
+):
     """
     Test if the Bounding Box filter correctly ignores a locker outside its area.
     (Bounding box coordinates created around Krakow).
     """
     url = f"{settings.API_V1_STR}/lockers/in-scope"
     response = await client.get(
-        url,
-        params={
-            "min_lat": 49.0,
-            "max_lat": 50.5,
-            "min_lon": 19.0,
-            "max_lon": 20.0
-        }
+        url, params={"min_lat": 49.0, "max_lat": 50.5, "min_lon": 19.0, "max_lon": 20.0}
     )
 
     assert response.status_code == 200
@@ -117,7 +111,9 @@ async def test_get_lockers_in_scope_validation_error(client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_get_lockers_in_scope_filter_excludes_result(client: AsyncClient, sample_locker: ParcelLocker):
+async def test_get_lockers_in_scope_filter_excludes_result(
+    client: AsyncClient, sample_locker: ParcelLocker
+):
     """
     Test if providing an additional filter (is_24_7=False) correctly excludes
     a locker that is geographically in scope, but logically doesn't match.
@@ -130,8 +126,8 @@ async def test_get_lockers_in_scope_filter_excludes_result(client: AsyncClient, 
             "max_lat": 53.0,
             "min_lon": 20.0,
             "max_lon": 22.0,
-            "is_24_7": False
-        }
+            "is_24_7": False,
+        },
     )
 
     assert response.status_code == 200
@@ -141,7 +137,9 @@ async def test_get_lockers_in_scope_filter_excludes_result(client: AsyncClient, 
 
 
 @pytest.mark.asyncio
-async def test_get_lockers_in_scope_limit_works(client: AsyncClient, db_session: AsyncSession):
+async def test_get_lockers_in_scope_limit_works(
+    client: AsyncClient, db_session: AsyncSession
+):
     """
     Test if the 'limit' parameter correctly truncates the number of returned records.
     """
@@ -151,7 +149,7 @@ async def test_get_lockers_in_scope_limit_works(client: AsyncClient, db_session:
             city="Warszawa",
             address="Testowa 1",
             status="Operating",
-            location=WKTElement("POINT(21.0122 52.2297)", srid=4326)
+            location=WKTElement("POINT(21.0122 52.2297)", srid=4326),
         )
         db_session.add(locker)
     await db_session.commit()
@@ -164,8 +162,8 @@ async def test_get_lockers_in_scope_limit_works(client: AsyncClient, db_session:
             "max_lat": 53.0,
             "min_lon": 20.0,
             "max_lon": 22.0,
-            "limit": 1
-        }
+            "limit": 1,
+        },
     )
 
     assert response.status_code == 200

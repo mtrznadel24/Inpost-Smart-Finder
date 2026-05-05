@@ -13,31 +13,39 @@ MOCK_VALID_ITEM_1 = {
     "name": "ADA01M",
     "status": "Operating",
     "location": {"longitude": 22.26405, "latitude": 51.73834},
-    "address_details": {"city": "Adamów", "street": "Kościuszki", "building_number": "27"},
+    "address_details": {
+        "city": "Adamów",
+        "street": "Kościuszki",
+        "building_number": "27",
+    },
     "location_description": "Przy sklepie Lewiatan",
     "location_247": True,
     "easy_access_zone": True,
     "payment_available": True,
-    "functions": ["parcel_collect", "parcel_send"]
+    "functions": ["parcel_collect", "parcel_send"],
 }
 
 MOCK_VALID_ITEM_2 = {
     "name": "ADA01N",
     "status": "Maintenance",
     "location": {"longitude": 22.25875, "latitude": 51.7444},
-    "address_details": {"city": "Adamów", "street": "Kleeberga", "building_number": "5B"},
+    "address_details": {
+        "city": "Adamów",
+        "street": "Kleeberga",
+        "building_number": "5B",
+    },
     "location_description": "Groszek",
     "location_247": False,
     "easy_access_zone": False,
     "payment_available": False,
-    "functions": []
+    "functions": [],
 }
 
 MOCK_INVALID_ITEM = {
     "name": "BROKEN01",
     "status": "Operating",
     "location": {"longitude": None, "latitude": None},
-    "address_details": {"city": "Brak", "street": "Brak", "building_number": "0"}
+    "address_details": {"city": "Brak", "street": "Brak", "building_number": "0"},
 }
 
 
@@ -57,7 +65,7 @@ async def test_save_to_db_inserts_new_records(db_session: AsyncSession):
     lockers = result.scalars().all()
 
     assert len(lockers) == 2
-    locker = next((l for l in lockers if l.name == "ADA01M"), None)
+    locker = next((item for item in lockers if item.name == "ADA01M"), None)
     assert locker is not None
     assert locker.city == "Adamów"
     assert locker.is_24_7 is True
@@ -75,7 +83,7 @@ async def test_save_to_db_updates_existing_records(db_session: AsyncSession):
         address="Stary Adres 1",
         status="Disabled",
         is_24_7=False,
-        location=WKTElement("POINT(22.0000 51.0000)", srid=4326)
+        location=WKTElement("POINT(22.0000 51.0000)", srid=4326),
     )
     db_session.add(existing_locker)
     await db_session.commit()
@@ -122,20 +130,20 @@ async def test_fetch_and_save_handles_pagination(db_session: AsyncSession):
         "count": 2,
         "page": 1,
         "total_pages": 2,
-        "items": [MOCK_VALID_ITEM_1]
+        "items": [MOCK_VALID_ITEM_1],
     }
 
     page_2_response = {
         "count": 2,
         "page": 2,
         "total_pages": 2,
-        "items": [MOCK_VALID_ITEM_2]
+        "items": [MOCK_VALID_ITEM_2],
     }
 
     mock_route = respx.get(settings.INPOST_API_URL)
     mock_route.side_effect = [
         Response(200, json=page_1_response),
-        Response(200, json=page_2_response)
+        Response(200, json=page_2_response),
     ]
 
     await fetch_and_save_inpost_data()
