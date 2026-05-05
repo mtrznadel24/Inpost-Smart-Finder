@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import {useState, useMemo, useRef} from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useTranslation } from "react-i18next";
 import { useLockers } from "@/features/lockers/hooks/useLockers";
 import type {LockerFiltersState, MapBounds} from "@/features/lockers/types";
 import { pinIcon, createCustomClusterIcon } from "../utils/icons";
+import { Map as LeafletMap } from "leaflet";
 import { MapEvents } from "./MapEvents";
 
 interface MapProps {
@@ -21,6 +22,20 @@ export function Map({ onMarkerClick, filters}: MapProps) {
 
   const { data: lockers, isLoading } = useLockers(bounds, filters);
   const isLimitReached = lockers?.length === 500;
+
+  const mapRef = useRef<LeafletMap | null>(null);
+
+  const handleMapReady = () => {
+    if (mapRef.current) {
+      const map = mapRef.current;
+      const b = map.getBounds().pad(0.5);
+      setBounds({
+        _southWest: { lat: b.getSouthWest().lat, lng: b.getSouthWest().lng },
+        _northEast: { lat: b.getNorthEast().lat, lng: b.getNorthEast().lng },
+      });
+      setCurrentZoom(map.getZoom());
+    }
+  };
 
   const markers = useMemo(() => {
     return lockers?.map((locker) => (
@@ -39,14 +54,8 @@ export function Map({ onMarkerClick, filters}: MapProps) {
         center={defaultCenter}
         zoom={13}
         className="w-full h-full"
-        whenReady={(e) => {
-          const b = e.target.getBounds().pad(0.5);
-          setBounds({
-            _southWest: { lat: b.getSouthWest().lat, lng: b.getSouthWest().lng },
-            _northEast: { lat: b.getNorthEast().lat, lng: b.getNorthEast().lng },
-          });
-          setCurrentZoom(e.target.getZoom());
-        }}
+        ref={mapRef}
+        whenReady={handleMapReady}
       >
         <TileLayer
           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
