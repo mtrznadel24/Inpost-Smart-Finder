@@ -4,7 +4,7 @@ import { Locker, MapBounds } from '../types';
 export async function getLockers(bounds: MapBounds | null): Promise<Locker[]> {
   if (!bounds) return [];
 
-  const { data } = await apiClient.get<Locker[]>('/in-scope', {
+  const { data } = await apiClient.get<Locker[]>('lockers/in-scope', {
     params: {
       min_lat: bounds._southWest.lat,
       max_lat: bounds._northEast.lat,
