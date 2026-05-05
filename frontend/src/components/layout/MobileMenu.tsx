@@ -11,7 +11,7 @@ import { Sidebar } from "./Sidebar";
 
 export function MobileMenu() {
   return (
-    <div className="absolute top-4 left-4 z-[1000] md:hidden">
+    <div className="absolute top-4 right-4 z-[1000] md:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="secondary" size="icon" className="shadow-lg rounded-full h-12 w-12 bg-white">
@@ -19,12 +19,12 @@ export function MobileMenu() {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="left" className="w-[300px] sm:w-[350px]">
+        <SheetContent side="right" className="w-[300px] sm:w-[350px]">
           <SheetHeader className="text-left mb-6">
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
 
-          <Sidebar />
+          <Sidebar lockerId={null} onClose={() => {}} />
 
         </SheetContent>
       </Sheet>

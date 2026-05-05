@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useTranslation } from "react-i18next";
@@ -14,10 +14,23 @@ interface MapProps {
 export function Map({ onMarkerClick }: MapProps) {
   const { t } = useTranslation();
   const defaultCenter: [number, number] = [52.2297, 21.0122];
+
   const [bounds, setBounds] = useState<MapBounds | null>(null);
+  const [currentZoom, setCurrentZoom] = useState<number>(13);
 
   const { data: lockers, isLoading } = useLockers(bounds);
   const isLimitReached = lockers?.length === 500;
+
+  const markers = useMemo(() => {
+    return lockers?.map((locker) => (
+      <Marker
+        key={locker.id}
+        position={[locker.latitude, locker.longitude]}
+        icon={pinIcon}
+        eventHandlers={{ click: () => onMarkerClick(locker.id) }}
+      />
+    ));
+  }, [lockers, onMarkerClick]);
 
   return (
     <div className="relative w-full h-full z-0">
@@ -26,36 +39,35 @@ export function Map({ onMarkerClick }: MapProps) {
         zoom={13}
         className="w-full h-full"
         whenReady={(e) => {
-          const b = e.target.getBounds();
+          const b = e.target.getBounds().pad(0.5);
           setBounds({
             _southWest: { lat: b.getSouthWest().lat, lng: b.getSouthWest().lng },
             _northEast: { lat: b.getNorthEast().lat, lng: b.getNorthEast().lng },
           });
+          setCurrentZoom(e.target.getZoom());
         }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
 
-        <MapEvents onBoundsChange={setBounds} />
+        <MapEvents onBoundsChange={setBounds} onZoomChange={setCurrentZoom} />
 
-        {!isLimitReached && (
-          <MarkerClusterGroup
-            chunkedLoading
-            disableClusteringAtZoom={15}
-            maxClusterRadius={60}
-            iconCreateFunction={createCustomClusterIcon}
-          >
-            {lockers?.map((locker) => (
-              <Marker
-                key={locker.id}
-                position={[locker.latitude, locker.longitude]}
-                icon={pinIcon}
-                eventHandlers={{ click: () => onMarkerClick(locker.id) }}
-              />
-            ))}
-          </MarkerClusterGroup>
+        {bounds && !isLimitReached && (
+          <>
+            {currentZoom > 14 ? (
+              <>{markers}</>
+            ) : (
+              <MarkerClusterGroup
+                maxClusterRadius={60}
+                iconCreateFunction={createCustomClusterIcon}
+                animate={false}
+              >
+                {markers}
+              </MarkerClusterGroup>
+            )}
+          </>
         )}
       </MapContainer>
 
