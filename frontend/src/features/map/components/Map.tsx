@@ -1,32 +1,23 @@
 import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { useTranslation } from "react-i18next";
 import { useLockers } from "@/features/lockers/hooks/useLockers";
 import type { MapBounds } from "@/features/lockers/types";
+import { pinIcon, createCustomClusterIcon } from "../utils/icons";
+import { MapEvents } from "./MapEvents";
 
-function MapEvents({ onBoundsChange }: { onBoundsChange: (bounds: MapBounds) => void }) {
-  const map = useMapEvents({
-    moveend: () => updateBounds(),
-    zoomend: () => updateBounds(),
-  });
-
-  const updateBounds = () => {
-    const b = map.getBounds();
-    onBoundsChange({
-      _southWest: { lat: b.getSouthWest().lat, lng: b.getSouthWest().lng },
-      _northEast: { lat: b.getNorthEast().lat, lng: b.getNorthEast().lng },
-    });
-  };
-
-  return null;
+interface MapProps {
+  onMarkerClick: (id: number) => void;
 }
 
-export function Map() {
+export function Map({ onMarkerClick }: MapProps) {
+  const { t } = useTranslation();
   const defaultCenter: [number, number] = [52.2297, 21.0122];
-
   const [bounds, setBounds] = useState<MapBounds | null>(null);
 
   const { data: lockers, isLoading } = useLockers(bounds);
+  const isLimitReached = lockers?.length === 500;
 
   return (
     <div className="relative w-full h-full z-0">
@@ -49,24 +40,40 @@ export function Map() {
 
         <MapEvents onBoundsChange={setBounds} />
 
-        <MarkerClusterGroup chunkedLoading>
-          {lockers?.map((locker) => (
-            <Marker key={locker.id} position={[locker.latitude, locker.longitude]}>
-              <Popup>
-                <div className="p-2 min-w-[150px]">
-                  <h3 className="font-bold text-lg">{locker.name}</h3>
-                  <p className="text-sm text-zinc-600 mb-2">{locker.status}</p>
-                  <p className="text-xs text-zinc-400">ID: {locker.id}</p>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MarkerClusterGroup>
+        {!isLimitReached && (
+          <MarkerClusterGroup
+            chunkedLoading
+            disableClusteringAtZoom={15}
+            maxClusterRadius={60}
+            iconCreateFunction={createCustomClusterIcon}
+          >
+            {lockers?.map((locker) => (
+              <Marker
+                key={locker.id}
+                position={[locker.latitude, locker.longitude]}
+                icon={pinIcon}
+                eventHandlers={{ click: () => onMarkerClick(locker.id) }}
+              />
+            ))}
+          </MarkerClusterGroup>
+        )}
       </MapContainer>
 
-      {isLoading && (
+      {!bounds && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-zinc-900 text-white px-4 py-2 rounded-full shadow-lg text-sm font-medium">
+          {t("map.zoomInPrompt")}
+        </div>
+      )}
+
+      {isLimitReached && bounds && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-zinc-900/90 backdrop-blur-sm text-white px-5 py-2.5 rounded-full shadow-2xl text-sm font-medium border border-zinc-700">
+          {t("map.tooManyResults")}
+        </div>
+      )}
+
+      {isLoading && bounds && !isLimitReached && (
         <div className="absolute top-4 right-4 z-[1000] bg-white px-4 py-2 rounded-md shadow-md text-sm font-medium">
-          Pobieranie...
+          {t("map.loading")}
         </div>
       )}
     </div>

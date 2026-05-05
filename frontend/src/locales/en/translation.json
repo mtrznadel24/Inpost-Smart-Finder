@@ -1,7 +1,21 @@
 {
+  "map": {
+    "zoomInPrompt": "Zoom in to see lockers",
+    "tooManyResults": "Too many results – zoom in more",
+    "loading": "Loading..."
+  },
   "sidebar": {
     "title": "Smart Finder",
     "subtitle": "Find the nearest locker in your area.",
-    "searchButton": "Search lockers"
+    "searchButton": "Search lockers",
+    "backToList": "Back to list",
+    "noLockerSelected": "Select a locker on the map to see details.",
+    "loadingError": "Error loading data.",
+    "available247": "Available 24/7",
+    "limitedHours": "Limited hours",
+    "paymentAvailable": "Payment available",
+    "easyAccess": "Easy access zone",
+    "descriptionHeader": "Location description",
+    "noImage": "No image available"
   }
 }
