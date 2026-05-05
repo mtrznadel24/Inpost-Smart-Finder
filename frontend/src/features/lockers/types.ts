@@ -22,3 +22,10 @@ export interface MapBounds {
   _southWest: { lat: number; lng: number };
   _northEast: { lat: number; lng: number };
 }
+
+export interface LockerFiltersState {
+  is_24_7: boolean;
+  payment_available: boolean;
+  easy_access_zone: boolean;
+  physical_type?: string;
+}

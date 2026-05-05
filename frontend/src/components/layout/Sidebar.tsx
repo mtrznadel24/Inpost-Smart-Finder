@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { LockerDetails } from "@/features/lockers/components/LockerDetails";
+import { LockerFiltersPanel } from "@/features/lockers/components/LockerFiltersPanel";
 import { ArrowLeft } from "lucide-react";
+import type { LockerFiltersState } from "@/features/lockers/types";
 
 interface SidebarProps {
   lockerId: number | null;
   onClose: () => void;
+  filters: LockerFiltersState;
+  onFiltersChange: (newFilters: LockerFiltersState) => void;
 }
 
-export function Sidebar({ lockerId, onClose }: SidebarProps) {
+export function Sidebar({ lockerId, onClose, filters, onFiltersChange }: SidebarProps) {
   const { t } = useTranslation();
 
   return (
@@ -29,20 +33,7 @@ export function Sidebar({ lockerId, onClose }: SidebarProps) {
           </div>
         </div>
       ) : (
-        <>
-          <div>
-            <h1 className="text-2xl font-black tracking-tight text-zinc-900">{t("sidebar.title")}</h1>
-            <p className="text-sm text-zinc-500 mt-1">{t("sidebar.subtitle")}</p>
-          </div>
-
-          <Button className="w-full bg-yellow-400 hover:bg-yellow-500 text-zinc-900 font-bold">
-            {t("sidebar.searchButton")}
-          </Button>
-
-          <div className="flex-1 overflow-y-auto mt-4 border-t pt-4">
-            <p className="text-sm text-zinc-400">Filters...</p>
-          </div>
-        </>
+        <LockerFiltersPanel filters={filters} onFiltersChange={onFiltersChange} />
       )}
     </div>
   );
