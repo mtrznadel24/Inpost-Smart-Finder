@@ -16,6 +16,20 @@
     "paymentAvailable": "Payment available",
     "easyAccess": "Easy access zone",
     "descriptionHeader": "Location description",
-    "noImage": "No image available"
+    "noImage": "No image available",
+    "searchPlaceholder": "Enter city or street...",
+    "deliveryOptions": "Delivery options",
+    "easyAccessLabel": "Easy access",
+    "easyAccessDesc": "Lockers in the lower part of the machine",
+    "paymentLabel": "Card payment",
+    "paymentDesc": "Pay for your parcel at the terminal",
+    "available247Label": "Available 24/7",
+    "available247Desc": "Pick up anytime, day or night",
+    "machineType": "Machine type",
+    "typeAll": "All",
+    "typeScreenless": "Screenless (App)",
+    "typeModular": "Modular",
+    "typeNewFM": "New type (NewFM)",
+    "typeNext": "Next"
   }
 }

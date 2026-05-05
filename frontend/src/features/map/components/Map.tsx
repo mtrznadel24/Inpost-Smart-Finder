@@ -3,22 +3,23 @@ import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useTranslation } from "react-i18next";
 import { useLockers } from "@/features/lockers/hooks/useLockers";
-import type { MapBounds } from "@/features/lockers/types";
+import type {LockerFiltersState, MapBounds} from "@/features/lockers/types";
 import { pinIcon, createCustomClusterIcon } from "../utils/icons";
 import { MapEvents } from "./MapEvents";
 
 interface MapProps {
   onMarkerClick: (id: number) => void;
+  filters: LockerFiltersState;
 }
 
-export function Map({ onMarkerClick }: MapProps) {
+export function Map({ onMarkerClick, filters}: MapProps) {
   const { t } = useTranslation();
   const defaultCenter: [number, number] = [52.2297, 21.0122];
 
   const [bounds, setBounds] = useState<MapBounds | null>(null);
   const [currentZoom, setCurrentZoom] = useState<number>(13);
 
-  const { data: lockers, isLoading } = useLockers(bounds);
+  const { data: lockers, isLoading } = useLockers(bounds, filters);
   const isLimitReached = lockers?.length === 500;
 
   const markers = useMemo(() => {

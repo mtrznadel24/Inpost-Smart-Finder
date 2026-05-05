@@ -1,7 +1,9 @@
-import type { MapBounds } from './types';
+import type {LockerFiltersState, MapBounds} from './types';
 
 export const lockerKeys = {
   all: ['lockers'] as const,
-  list: (bounds: MapBounds | null) => [...lockerKeys.all, 'list', bounds] as const,
-  detail: (id: number) => [...lockerKeys.all, 'detail', id] as const,
+  list: (bounds: MapBounds | null, filters: LockerFiltersState) =>
+    [...lockerKeys.all, bounds, filters] as const,
+  details: () => [...lockerKeys.all, 'detail'] as const,
+  detail: (id: number) => [...lockerKeys.details(), id] as const,
 };
