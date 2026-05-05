@@ -3,14 +3,21 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.database import DbSessionDep
+
 from .crud import get_locker_by_id, get_lockers_in_bbox
-from .schemas import LockerQueryParams, ParcelLockerDetailsResponse, ParcelLockerResponse
+from .schemas import (
+    LockerQueryParams,
+    ParcelLockerDetailsResponse,
+    ParcelLockerResponse,
+)
 
 router = APIRouter(tags=["Lockers"])
 
 
 @router.get("/in-scope", response_model=List[ParcelLockerResponse])
-async def get_lockers_in_scope(db: DbSessionDep, filters: LockerQueryParams = Depends()):
+async def get_lockers_in_scope(
+    db: DbSessionDep, filters: LockerQueryParams = Depends()
+):
     """
     Fetches lightweight parcel locker data visible within the current map bounding box.
     """

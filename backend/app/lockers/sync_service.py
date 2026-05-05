@@ -5,11 +5,12 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.lockers.models import ParcelLocker
 from app.core.database import session_manager
+from app.lockers.models import ParcelLocker
 from app.lockers.schemas import ParcelLockerCreate
 
 logger = logging.getLogger(__name__)
+
 
 async def fetch_and_save_inpost_data(ctx=None):
     """
@@ -45,7 +46,10 @@ async def save_to_db(lockers, db: AsyncSession):
             validated_data = ParcelLockerCreate(
                 name=locker["name"],
                 city=locker["address_details"]["city"],
-                address=f"{locker['address_details']['street']} {locker['address_details']['building_number']}",
+                address=(
+                    f"{locker['address_details']['street']} "
+                    f"{locker['address_details']['building_number']}"
+                ),
                 description=locker.get("location_description"),
                 image_url=locker.get("image_url"),
                 status=locker["status"],
@@ -55,7 +59,7 @@ async def save_to_db(lockers, db: AsyncSession):
                 payment_available=locker.get("payment_available", False),
                 functions=locker.get("functions", []),
                 longitude=locker["location"]["longitude"],
-                latitude=locker["location"]["latitude"]
+                latitude=locker["location"]["latitude"],
             )
         except Exception as e:
             logger.warning(f"Error validating locker {locker.get('name')}: {e}")
@@ -63,7 +67,9 @@ async def save_to_db(lockers, db: AsyncSession):
 
         db_values = validated_data.model_dump(exclude={"longitude", "latitude"})
 
-        db_values["location"] = f"POINT({validated_data.longitude} {validated_data.latitude})"
+        db_values["location"] = (
+            f"POINT({validated_data.longitude} {validated_data.latitude})"
+        )
 
         stmt = insert(ParcelLocker).values(**db_values)
 
@@ -73,13 +79,10 @@ async def save_to_db(lockers, db: AsyncSession):
             "easy_access_zone": validated_data.easy_access_zone,
             "payment_available": validated_data.payment_available,
             "functions": validated_data.functions,
-            "description": validated_data.description
+            "description": validated_data.description,
         }
 
-        stmt = stmt.on_conflict_do_update(
-            index_elements=['name'],
-            set_=update_dict
-        )
+        stmt = stmt.on_conflict_do_update(index_elements=["name"], set_=update_dict)
 
         await db.execute(stmt)
     await db.commit()

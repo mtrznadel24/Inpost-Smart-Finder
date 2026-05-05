@@ -1,6 +1,6 @@
+import contextlib
 import logging
 
-import contextlib
 import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
@@ -12,9 +12,11 @@ from app.core.config import settings
 from app.core.database import Base, DBSessionManager, get_db, session_manager
 from app.main import app
 
-TEST_DATABASE_URL = str(settings.async_database_url)\
-    .replace("smart_finder_db", "smart_finder_test_db")\
+TEST_DATABASE_URL = (
+    str(settings.async_database_url)
+    .replace("smart_finder_db", "smart_finder_test_db")
     .replace("@db:", "@localhost:")
+)
 
 test_session_manager = DBSessionManager(
     TEST_DATABASE_URL,
@@ -82,6 +84,7 @@ async def client(db_session):
     Test client for FastAPI endpoints.
     Overrides the main database dependency to use the isolated test session.
     """
+
     async def override_get_db():
         yield db_session
 

@@ -1,8 +1,7 @@
-from sqlalchemy import select, and_, func
-from sqlalchemy.ext.asyncio import AsyncSession
-from geoalchemy2.functions import ST_X, ST_Y, ST_MakeEnvelope
-from sqlalchemy import cast
 from geoalchemy2 import Geometry
+from geoalchemy2.functions import ST_X, ST_Y, ST_MakeEnvelope
+from sqlalchemy import cast, func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.lockers.models import ParcelLocker
 from app.lockers.schemas import LockerQueryParams
@@ -13,9 +12,7 @@ async def get_lockers_in_bbox(db: AsyncSession, params: LockerQueryParams):
     Fetches lockers within a specific geographic bounding box using PostGIS.
     """
     bbox_filter = ST_MakeEnvelope(
-        params.min_lon, params.min_lat,
-        params.max_lon, params.max_lat,
-        4326
+        params.min_lon, params.min_lat, params.max_lon, params.max_lat, 4326
     )
 
     query = select(
@@ -24,10 +21,8 @@ async def get_lockers_in_bbox(db: AsyncSession, params: LockerQueryParams):
         ParcelLocker.status,
         ParcelLocker.physical_type,
         ST_X(cast(ParcelLocker.location, Geometry)).label("longitude"),
-        ST_Y(cast(ParcelLocker.location, Geometry)).label("latitude")
-    ).where(
-        func.ST_Within(cast(ParcelLocker.location, Geometry), bbox_filter)
-    )
+        ST_Y(cast(ParcelLocker.location, Geometry)).label("latitude"),
+    ).where(func.ST_Within(cast(ParcelLocker.location, Geometry), bbox_filter))
 
     if params.is_24_7 is not None:
         query = query.where(ParcelLocker.is_24_7 == params.is_24_7)
@@ -71,7 +66,7 @@ async def get_locker_by_id(db: AsyncSession, locker_id: int):
         ParcelLocker.payment_available,
         ParcelLocker.functions,
         ST_X(cast(ParcelLocker.location, Geometry)).label("longitude"),
-        ST_Y(cast(ParcelLocker.location, Geometry)).label("latitude")
+        ST_Y(cast(ParcelLocker.location, Geometry)).label("latitude"),
     ).where(ParcelLocker.id == locker_id)
 
     result = await db.execute(query)
