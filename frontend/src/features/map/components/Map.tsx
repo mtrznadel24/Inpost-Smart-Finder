@@ -1,38 +1,74 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { useLockers } from "@/features/lockers/hooks/useLockers";
+import type { MapBounds } from "@/features/lockers/types";
 
-const MOCK_LOCKERS = [
-  { id: 1, name: "WAW123", position: [52.2297, 21.0122] as [number, number], address: "ul. Prosta 1" },
-  { id: 2, name: "WAW456", position: [52.2310, 21.0150] as [number, number], address: "ul. Jasna 10" },
-  { id: 3, name: "WAW789", position: [52.2280, 21.0200] as [number, number], address: "ul. Cicha 5" },
-];
+function MapEvents({ onBoundsChange }: { onBoundsChange: (bounds: MapBounds) => void }) {
+  const map = useMapEvents({
+    moveend: () => updateBounds(),
+    zoomend: () => updateBounds(),
+  });
+
+  const updateBounds = () => {
+    const b = map.getBounds();
+    onBoundsChange({
+      _southWest: { lat: b.getSouthWest().lat, lng: b.getSouthWest().lng },
+      _northEast: { lat: b.getNorthEast().lat, lng: b.getNorthEast().lng },
+    });
+  };
+
+  return null;
+}
 
 export function Map() {
   const defaultCenter: [number, number] = [52.2297, 21.0122];
 
-  return (
-    <MapContainer
-      center={defaultCenter}
-      zoom={13}
-      className="w-full h-full z-0"
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+  const [bounds, setBounds] = useState<MapBounds | null>(null);
 
-      <MarkerClusterGroup chunkedLoading>
-        {MOCK_LOCKERS.map((locker) => (
-          <Marker key={locker.id} position={locker.position}>
-            <Popup>
-              <div className="p-2">
-                <h3 className="font-bold text-lg">{locker.name}</h3>
-                <p className="text-sm text-zinc-600">{locker.address}</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
-      </MarkerClusterGroup>
-    </MapContainer>
+  const { data: lockers, isLoading } = useLockers(bounds);
+
+  return (
+    <div className="relative w-full h-full z-0">
+      <MapContainer
+        center={defaultCenter}
+        zoom={13}
+        className="w-full h-full"
+        whenReady={(e) => {
+          const b = e.target.getBounds();
+          setBounds({
+            _southWest: { lat: b.getSouthWest().lat, lng: b.getSouthWest().lng },
+            _northEast: { lat: b.getNorthEast().lat, lng: b.getNorthEast().lng },
+          });
+        }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        <MapEvents onBoundsChange={setBounds} />
+
+        <MarkerClusterGroup chunkedLoading>
+          {lockers?.map((locker) => (
+            <Marker key={locker.id} position={[locker.latitude, locker.longitude]}>
+              <Popup>
+                <div className="p-2 min-w-[150px]">
+                  <h3 className="font-bold text-lg">{locker.name}</h3>
+                  <p className="text-sm text-zinc-600 mb-2">{locker.status}</p>
+                  <p className="text-xs text-zinc-400">ID: {locker.id}</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MarkerClusterGroup>
+      </MapContainer>
+
+      {isLoading && (
+        <div className="absolute top-4 right-4 z-[1000] bg-white px-4 py-2 rounded-md shadow-md text-sm font-medium">
+          Pobieranie...
+        </div>
+      )}
+    </div>
   );
 }
