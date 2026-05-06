@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
 import {
   MapPin,
   Clock,
@@ -9,7 +10,8 @@ import {
   Info,
   CheckCircle2,
   XCircle,
-  Package
+  Package,
+  Navigation
 } from "lucide-react";
 import type { LockerDetails } from "@/features/lockers/types.ts";
 
@@ -35,6 +37,22 @@ interface LockerDetailsViewProps {
 
 export function LockerDetailsView({ locker }: LockerDetailsViewProps) {
   const { t } = useTranslation();
+
+  const handleNavigate = () => {
+    const { latitude, longitude } = locker;
+
+    const isAppleOS = /iPad|iPhone|iPod|Mac/.test(navigator.userAgent);
+
+    let url = '';
+
+    if (isAppleOS) {
+      url = `https://maps.apple.com/?daddr=${latitude},${longitude}`;
+    } else {
+      url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <ScrollArea className="h-full pr-4 -mr-4">
@@ -73,6 +91,14 @@ export function LockerDetailsView({ locker }: LockerDetailsViewProps) {
             <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-yellow-500" />
             <span className="leading-tight">{locker.address}<br/>{locker.city}</span>
           </div>
+
+          <Button
+            onClick={handleNavigate}
+            className="w-full mt-4 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl shadow-sm p-6"
+          >
+            <Navigation className="w-4 h-4 mr-2" />
+            {t("sidebar.navigateButton")}
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-2">
