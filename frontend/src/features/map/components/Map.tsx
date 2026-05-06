@@ -101,14 +101,14 @@ export function Map({ onMarkerClick, filters, flyToLocation}: MapProps) {
         )}
       </MapContainer>
 
-      <div className="absolute bottom-8 right-4 z-[1000] md:bottom-8 md:right-8">
+      <div className="absolute bottom-24 right-4 z-[1000] md:bottom-8 md:right-8">
         <button
           onClick={(e) => {
             e.preventDefault();
             requestLocation();
           }}
           className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-zinc-50 border border-zinc-200 text-zinc-700 transition-all active:scale-95"
-          title="Znajdź mnie"
+          title="find me"
         >
           {isLocating ? (
             <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
