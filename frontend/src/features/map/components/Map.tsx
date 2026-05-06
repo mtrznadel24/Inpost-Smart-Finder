@@ -101,7 +101,7 @@ export function Map({ onMarkerClick, filters, flyToLocation}: MapProps) {
         )}
       </MapContainer>
 
-      <div className="absolute bottom-8 right-4 z-[1000] md:bottom-8 md:right-8">
+      <div className="absolute bottom-16 right-4 z-[1000] md:bottom-8 md:right-8">
         <button
           onClick={(e) => {
             e.preventDefault();

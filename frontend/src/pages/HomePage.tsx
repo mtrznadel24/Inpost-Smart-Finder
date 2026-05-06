@@ -21,7 +21,7 @@ export function HomePage() {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <div className="flex h-screen w-full bg-zinc-50 overflow-hidden relative">
+    <div className="flex h-[100dvh] w-full bg-zinc-50 overflow-hidden relative">
 
       <aside className="w-80 bg-white border-r p-4 z-10 shadow-xl hidden md:flex flex-col">
         <Sidebar
