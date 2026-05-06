@@ -34,6 +34,12 @@
     "typeNext": "Next",
     "placeNotFound": "Nie znaleziono miejsca",
     "searchError": "Błąd podczas wyszukiwania miejsca",
-    "navigateButton": "Nawiguj"
+    "navigateButton": "Nawiguj",
+    "funcSendParcel": "Nadanie paczki",
+    "funcSendAllegro": "Nadanie Allegro",
+    "funcSendCrossNetwork": "Nadanie poza siecią",
+    "funcCourierPickup": "Odbiór przez kuriera",
+    "additionalFunctions": "Dodatkowe funkcje",
+    "functionsHeader": "Obsługiwane funkcje"
   }
 }

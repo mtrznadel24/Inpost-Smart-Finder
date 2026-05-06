@@ -24,7 +24,8 @@ export function LockerFiltersPanel({ filters, onFiltersChange, onLocationSearch 
     is_24_7: false,
     payment_available: false,
     easy_access_zone: false,
-    physical_type: undefined
+    physical_type: undefined,
+    function: undefined
   };
 
   const handleSearch = async () => {
@@ -162,6 +163,38 @@ export function LockerFiltersPanel({ filters, onFiltersChange, onLocationSearch 
                 onClick={() => onFiltersChange({ ...safeFilters, physical_type: type.id })}
               >
                 {type.label}
+              </Badge>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 ml-1">
+          {t("sidebar.additionalFunctions")}
+        </h3>
+        <div className="flex flex-col gap-2">
+          {[
+            { id: undefined, label: t("sidebar.typeAll") },
+            { id: "parcel_send", label: t("sidebar.funcSendParcel") },
+            { id: "allegro_parcel_send", label: t("sidebar.funcSendAllegro") },
+            { id: "cross_network_parcel_send", label: t("sidebar.funcSendCrossNetwork") },
+            { id: "standard_courier_send", label: t("sidebar.funcCourierPickup") }
+          ].map((func) => {
+            const isSelected = safeFilters.function === func.id;
+            return (
+              <Badge
+                key={func.id || "all_func"}
+                variant={isSelected ? "default" : "outline"}
+                className={`cursor-pointer px-4 py-2 transition-all duration-200 justify-start ${
+                  isSelected 
+                    ? "bg-zinc-900 hover:bg-zinc-800 text-white font-bold border-transparent" 
+                    : "bg-white hover:bg-zinc-50 text-zinc-600 border-zinc-200"
+                }`}
+
+                onClick={() => onFiltersChange({ ...safeFilters, function: func.id })}
+              >
+                {func.label}
               </Badge>
             );
           })}

@@ -15,6 +15,7 @@ export function HomePage() {
     payment_available: false,
     easy_access_zone: false,
     physical_type: undefined,
+    function: undefined,
   });
 
   const [mapFlyTo, setMapFlyTo] = useState<{ lat: number, lng: number, zoom: number } | null>(null);

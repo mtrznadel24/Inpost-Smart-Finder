@@ -118,6 +118,33 @@ export function LockerDetailsView({ locker }: LockerDetailsViewProps) {
         )}
 
       </div>
+
+      {locker.functions && locker.functions.length > 0 && (
+          <div className="mt-2 border-t pt-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Package className="w-4 h-4 text-zinc-400" />
+              <h4 className="text-sm font-bold text-zinc-700">{t("sidebar.functionsHeader")}</h4>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {locker.functions.map((func) => {
+                const nameMap: Record<string, string> = {
+                  parcel_send: t("sidebar.funcSendParcel"),
+                  allegro_parcel_send: t("sidebar.funcSendAllegro"),
+                  cross_network_parcel_send: t("sidebar.funcSendCrossNetwork"),
+                  standard_courier_send: t("sidebar.funcCourierPickup")
+                };
+                if (!nameMap[func]) return null;
+
+                return (
+                  <Badge key={func} variant="secondary" className="bg-zinc-100 text-zinc-600 text-[10px] uppercase font-bold tracking-wider">
+                    {nameMap[func]}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
     </ScrollArea>
   );
 }
