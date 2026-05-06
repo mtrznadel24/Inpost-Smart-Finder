@@ -32,6 +32,7 @@
     "typeNewFM": "New type (NewFM)",
     "typeNext": "Next",
     "placeNotFound": "Place not found",
-    "searchError": "Error searching for place"
+    "searchError": "Error searching for place",
+    "navigateButton": "Navigate"
   }
 }
