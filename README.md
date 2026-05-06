@@ -75,12 +75,16 @@ Backend API Docs (Swagger): [http://localhost:8000/docs](http://localhost:8000/d
 Note: Upon the first startup, the background worker will immediately begin fetching data from the InPost API. It takes a few moments to populate the database with all national lockers.
 
 ### Testing & CI
-To ensure the reliability of the core backend logic, the application is fully tested with Pytest, covering the main code paths and endpoints.
-Additionally, I set up a GitHub Actions CI pipeline that automatically runs the test suite and a linter on every Pull Request and merge to the main branch.
 
-To run the tests locally (while containers are running):
+To ensure the reliability of the core backend logic, the application is fully tested with Pytest, covering the main code paths and endpoints. 
+Additionally, I set up a GitHub Actions CI pipeline that automatically runs the test suite and a linter on every Pull Request and merge to the `main` branch.
+
+To run the tests locally, use Poetry directly in the backend directory:
+
 ```bash
-docker compose exec backend pytest
+cd backend
+poetry install
+poetry run pytest
 ```
 
 ### What I Left Out (Trade-offs)
