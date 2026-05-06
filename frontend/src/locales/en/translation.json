@@ -33,6 +33,7 @@
     "typeNext": "Next",
     "placeNotFound": "Place not found",
     "searchError": "Error searching for place",
-    "navigateButton": "Navigate"
+    "navigateButton": "Navigate",
+    "geoError": "Enable GPS / No access"
   }
 }

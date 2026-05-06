@@ -27,7 +27,7 @@ export function Map({ onMarkerClick, filters, flyToLocation}: MapProps) {
   const isLimitReached = lockers?.length === 500;
 
   const mapRef = useRef<LeafletMap | null>(null);
-  const { location: userLocation, isLoading: isLocating, requestLocation } = useGeolocation();
+  const { location: userLocation, isLoading: isLocating, requestLocation, error: geoError } = useGeolocation();
 
   useEffect(() => {
     if (userLocation && mapRef.current) {
@@ -101,14 +101,20 @@ export function Map({ onMarkerClick, filters, flyToLocation}: MapProps) {
         )}
       </MapContainer>
 
-      <div className="absolute bottom-16 right-4 z-[1000] md:bottom-8 md:right-8">
+      <div className="absolute bottom-6 right-4 z-[1000] md:bottom-8 md:right-8 flex flex-col items-end gap-2">
+        {geoError && (
+          <div className="bg-zinc-900 text-red-400 px-3 py-2 rounded-xl shadow-lg text-xs font-bold animate-in fade-in slide-in-from-bottom-2 border border-red-900/30">
+            {t("map.geoError")}
+          </div>
+        )}
+
         <button
           onClick={(e) => {
             e.preventDefault();
             requestLocation();
           }}
-          className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-zinc-50 border border-zinc-200 text-zinc-700 transition-all active:scale-95"
-          title="Znajdź mnie"
+          className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-xl hover:bg-zinc-50 border border-zinc-200 text-zinc-700 transition-all active:scale-95"
+          title={t("sidebar.navigateButton")}
         >
           {isLocating ? (
             <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />

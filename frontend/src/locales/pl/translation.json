@@ -33,6 +33,7 @@
     "typeNext": "Next",
     "placeNotFound": "Nie znaleziono miejsca",
     "searchError": "Błąd podczas wyszukiwania miejsca",
-    "navigateButton": "Nawiguj"
+    "navigateButton": "Nawiguj",
+    "geoError": "Włącz GPS / Brak dostępu"
   }
 }
