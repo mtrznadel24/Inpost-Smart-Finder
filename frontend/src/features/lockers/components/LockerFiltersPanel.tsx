@@ -59,7 +59,7 @@ export function LockerFiltersPanel({ filters, onFiltersChange, onLocationSearch 
             }}
           />
         </div>
-        {error && <p className="text-red-500 text-xs mt-1">{t(error)}</p>}
+        {error && <p className="text-red-500 text-xs mt-1">{t(error as any)}</p>}
       </div>
 
       <div className="space-y-4">
