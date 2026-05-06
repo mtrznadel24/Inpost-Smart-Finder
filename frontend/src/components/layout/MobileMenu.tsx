@@ -13,9 +13,10 @@ import type { LockerFiltersState } from "@/features/lockers/types";
 interface MobileMenuProps {
   filters: LockerFiltersState;
   onFiltersChange: (newFilters: LockerFiltersState) => void;
+  onLocationSearch: (target: { lat: number, lng: number, zoom: number }) => void;
 }
 
-export function MobileMenu({ filters, onFiltersChange }: MobileMenuProps) {
+export function MobileMenu({ filters, onFiltersChange, onLocationSearch }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -51,6 +52,7 @@ export function MobileMenu({ filters, onFiltersChange }: MobileMenuProps) {
               onClose={() => setOpen(false)}
               filters={filters}
               onFiltersChange={onFiltersChange}
+              onLocationSearch={onLocationSearch}
             />
           </div>
 

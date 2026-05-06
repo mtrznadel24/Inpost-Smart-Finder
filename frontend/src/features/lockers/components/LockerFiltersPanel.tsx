@@ -1,18 +1,23 @@
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Search } from "lucide-react";
+import {Loader2, Search} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import type { LockerFiltersState } from "../types";
+import {useGeocoding} from "@/hooks/useGeocoding.ts";
+import {useState} from "react";
 
 interface LockerFiltersPanelProps {
   filters: LockerFiltersState;
   onFiltersChange: (newFilters: LockerFiltersState) => void;
+  onLocationSearch: (target: { lat: number, lng: number, zoom: number }) => void;
 }
 
-export function LockerFiltersPanel({ filters, onFiltersChange }: LockerFiltersPanelProps) {
+export function LockerFiltersPanel({ filters, onFiltersChange, onLocationSearch }: LockerFiltersPanelProps) {
   const { t } = useTranslation();
+  const { searchAddress, isSearching, error } = useGeocoding();
+  const [searchValue, setSearchValue] = useState("");
 
   const safeFilters = filters || {
     is_24_7: false,
@@ -21,24 +26,40 @@ export function LockerFiltersPanel({ filters, onFiltersChange }: LockerFiltersPa
     physical_type: undefined
   };
 
+  const handleSearch = async () => {
+    if (!searchValue.trim()) return;
+    const result = await searchAddress(searchValue);
+    if (result) {
+      onLocationSearch({ lat: result.lat, lng: result.lng, zoom: result.zoom });
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 h-full pb-6">
       <div>
         <h1 className="text-2xl font-black tracking-tight text-zinc-900">{t("sidebar.title")}</h1>
         <p className="text-sm text-zinc-500 mt-1">{t("sidebar.subtitle")}</p>
       </div>
-
-      <div className="relative shadow-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-        <Input
-          placeholder={t("sidebar.searchPlaceholder")}
-          className="pl-10 bg-white border-zinc-200 focus-visible:ring-yellow-400 rounded-xl"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              console.log("Looking for:", e.currentTarget.value);
-            }
-          }}
-        />
+      <div className="flex flex-col gap-1">
+        <div className="relative shadow-sm">
+          {isSearching ? (
+             <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 animate-spin" />
+          ) : (
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
+          )}
+          <Input
+            placeholder={t("sidebar.searchPlaceholder")}
+             value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            className="pl-10 bg-white border-zinc-200 focus-visible:ring-yellow-400 rounded-xl"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                  handleSearch();
+              }
+            }}
+          />
+        </div>
+        {error && <p className="text-red-500 text-xs mt-1">{t(error)}</p>}
       </div>
 
       <div className="space-y-4">
