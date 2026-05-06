@@ -34,6 +34,12 @@
     "typeNext": "Next",
     "placeNotFound": "Place not found",
     "searchError": "Error searching for place",
-    "navigateButton": "Navigate"
+    "navigateButton": "Navigate",
+    "funcSendParcel": "Send parcel",
+    "funcSendAllegro": "Send Allegro parcel",
+    "funcSendCrossNetwork": "Cross-network send",
+    "funcCourierPickup": "Courier pick-up",
+    "additionalFunctions": "Additional Functions",
+    "functionsHeader": "Supported Functions"
   }
 }

@@ -28,4 +28,5 @@ export interface LockerFiltersState {
   payment_available: boolean;
   easy_access_zone: boolean;
   physical_type?: string;
+  function?: string;
 }

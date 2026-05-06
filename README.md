@@ -90,9 +90,8 @@ poetry run pytest
 ### What I Left Out (Trade-offs)
 To keep the scope manageable and focused on a high-quality core experience, I deliberately left out:
 
-Automated CD Pipeline: While I implemented CI for testing, the actual deployment to the DigitalOcean server is done via manual Docker commands to focus more time on application architecture.
-
-User Accounts: Features like saving favorite lockers were omitted to keep the tool frictionless and immediate.
+* **Automated CD Pipeline:** While I implemented CI for testing, the actual deployment to the DigitalOcean server is done via manual Docker commands to focus more time on application architecture.
+* **User Accounts:** Features like saving favorite lockers were omitted to keep the tool frictionless and immediate.
 
 ### Author
 [Maciej Trznadel](https://github.com/mtrznadel24)
