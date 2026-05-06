@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     INPOST_API_URL: str = "https://api-global-points.easypack24.net/v1/points"
     LOG_LEVEL: str = "INFO"
     API_V1_STR: str = "/api/v1"
+    BACKEND_CORS_ORIGINS: str = "http://localhost:5173"
 
     @property
     def async_database_url(self) -> str:
@@ -25,6 +26,10 @@ class Settings(BaseSettings):
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
+
+    @property
+    def origins(self) -> list:
+        return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",")]
 
     model_config = SettingsConfigDict(
         env_file=str(BASE_DIR / ".env"), env_file_encoding="utf-8", extra="ignore"
