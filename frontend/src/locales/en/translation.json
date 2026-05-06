@@ -2,7 +2,8 @@
   "map": {
     "zoomInPrompt": "Zoom in to see lockers",
     "tooManyResults": "Too many results – zoom in more",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "geoError": "Enable GPS / No access"
   },
   "sidebar": {
     "title": "Smart Finder",
@@ -33,7 +34,6 @@
     "typeNext": "Next",
     "placeNotFound": "Place not found",
     "searchError": "Error searching for place",
-    "navigateButton": "Navigate",
-    "geoError": "Enable GPS / No access"
+    "navigateButton": "Navigate"
   }
 }

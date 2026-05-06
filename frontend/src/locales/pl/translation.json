@@ -2,7 +2,8 @@
   "map": {
     "zoomInPrompt": "Przybliż, aby zobaczyć paczkomaty",
     "tooManyResults": "Za dużo wyników – przybliż bardziej",
-    "loading": "Ładowanie..."
+    "loading": "Ładowanie...",
+    "geoError": "Włącz GPS / Brak dostępu"
   },
   "sidebar": {
     "title": "Smart Finder",
@@ -33,7 +34,6 @@
     "typeNext": "Next",
     "placeNotFound": "Nie znaleziono miejsca",
     "searchError": "Błąd podczas wyszukiwania miejsca",
-    "navigateButton": "Nawiguj",
-    "geoError": "Włącz GPS / Brak dostępu"
+    "navigateButton": "Nawiguj"
   }
 }
