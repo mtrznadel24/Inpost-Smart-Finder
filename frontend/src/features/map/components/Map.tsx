@@ -1,4 +1,4 @@
-import {useState, useMemo, useRef} from "react";
+import {useState, useMemo, useRef, useEffect} from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,8 @@ import type {LockerFiltersState, MapBounds} from "@/features/lockers/types";
 import { pinIcon, createCustomClusterIcon } from "../utils/icons";
 import { Map as LeafletMap } from "leaflet";
 import { MapEvents } from "./MapEvents";
+import {useGeolocation} from "@/hooks/useGeolocation.ts";
+import {Loader2, LocateFixed} from "lucide-react";
 
 interface MapProps {
   onMarkerClick: (id: number) => void;
@@ -24,6 +26,13 @@ export function Map({ onMarkerClick, filters}: MapProps) {
   const isLimitReached = lockers?.length === 500;
 
   const mapRef = useRef<LeafletMap | null>(null);
+  const { location: userLocation, isLoading: isLocating, requestLocation } = useGeolocation();
+
+  useEffect(() => {
+    if (userLocation && mapRef.current) {
+      mapRef.current.flyTo(userLocation, 15, { duration: 1.5 });
+    }
+  }, [userLocation]);
 
   const handleMapReady = () => {
     if (mapRef.current) {
@@ -80,6 +89,23 @@ export function Map({ onMarkerClick, filters}: MapProps) {
           </>
         )}
       </MapContainer>
+
+      <div className="absolute bottom-8 right-4 z-[1000] md:bottom-8 md:right-8">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            requestLocation();
+          }}
+          className="flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-zinc-50 border border-zinc-200 text-zinc-700 transition-all active:scale-95"
+          title="Znajdź mnie"
+        >
+          {isLocating ? (
+            <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
+          ) : (
+            <LocateFixed className="w-5 h-5" />
+          )}
+        </button>
+      </div>
 
       {!bounds && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-zinc-900 text-white px-4 py-2 rounded-full shadow-lg text-sm font-medium">
