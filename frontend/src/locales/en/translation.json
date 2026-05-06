@@ -30,6 +30,8 @@
     "typeScreenless": "Screenless (App)",
     "typeModular": "Modular",
     "typeNewFM": "New type (NewFM)",
-    "typeNext": "Next"
+    "typeNext": "Next",
+    "placeNotFound": "Place not found",
+    "searchError": "Error searching for place"
   }
 }

@@ -13,9 +13,10 @@ import {Loader2, LocateFixed} from "lucide-react";
 interface MapProps {
   onMarkerClick: (id: number) => void;
   filters: LockerFiltersState;
+  flyToLocation: { lat: number, lng: number, zoom: number } | null;
 }
 
-export function Map({ onMarkerClick, filters}: MapProps) {
+export function Map({ onMarkerClick, filters, flyToLocation}: MapProps) {
   const { t } = useTranslation();
   const defaultCenter: [number, number] = [52.2297, 21.0122];
 
@@ -33,6 +34,16 @@ export function Map({ onMarkerClick, filters}: MapProps) {
       mapRef.current.flyTo(userLocation, 15, { duration: 1.5 });
     }
   }, [userLocation]);
+
+  useEffect(() => {
+    if (flyToLocation && mapRef.current) {
+      mapRef.current.flyTo(
+        [flyToLocation.lat, flyToLocation.lng],
+        flyToLocation.zoom,
+        { duration: 2, easeLinearity: 0.25 }
+      );
+    }
+  }, [flyToLocation]);
 
   const handleMapReady = () => {
     if (mapRef.current) {

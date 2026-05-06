@@ -10,9 +10,10 @@ interface SidebarProps {
   onClose: () => void;
   filters: LockerFiltersState;
   onFiltersChange: (newFilters: LockerFiltersState) => void;
+  onLocationSearch: (target: { lat: number, lng: number, zoom: number }) => void;
 }
 
-export function Sidebar({ lockerId, onClose, filters, onFiltersChange }: SidebarProps) {
+export function Sidebar({ lockerId, onClose, filters, onFiltersChange, onLocationSearch }: SidebarProps) {
   const { t } = useTranslation();
 
   return (
@@ -33,7 +34,7 @@ export function Sidebar({ lockerId, onClose, filters, onFiltersChange }: Sidebar
           </div>
         </div>
       ) : (
-        <LockerFiltersPanel filters={filters} onFiltersChange={onFiltersChange} />
+        <LockerFiltersPanel filters={filters} onFiltersChange={onFiltersChange} onLocationSearch={onLocationSearch} />
       )}
     </div>
   );

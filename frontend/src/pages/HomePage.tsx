@@ -17,6 +17,7 @@ export function HomePage() {
     physical_type: undefined,
   });
 
+  const [mapFlyTo, setMapFlyTo] = useState<{ lat: number, lng: number, zoom: number } | null>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
@@ -28,6 +29,7 @@ export function HomePage() {
           onClose={() => setSelectedLockerId(null)}
           filters={filters}
           onFiltersChange={setFilters}
+          onLocationSearch={setMapFlyTo}
         />
       </aside>
 
@@ -35,11 +37,13 @@ export function HomePage() {
         <Map
           onMarkerClick={(id) => setSelectedLockerId(id)}
           filters={filters}
+          flyToLocation={mapFlyTo}
         />
 
         <MobileMenu
           filters={filters}
           onFiltersChange={setFilters}
+          onLocationSearch={setMapFlyTo}
         />
       </main>
 
