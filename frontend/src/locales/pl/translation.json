@@ -1,0 +1,38 @@
+{
+  "map": {
+    "zoomInPrompt": "Przybliż, aby zobaczyć paczkomaty",
+    "tooManyResults": "Za dużo wyników – przybliż bardziej",
+    "loading": "Ładowanie..."
+  },
+  "sidebar": {
+    "title": "Smart Finder",
+    "subtitle": "Znajdź najbliższy paczkomat w Twojej okolicy.",
+    "searchButton": "Szukaj paczkomatów",
+    "backToList": "Powrót do listy",
+    "noLockerSelected": "Wybierz paczkomat na mapie, aby zobaczyć szczegóły.",
+    "loadingError": "Błąd ładowania danych.",
+    "available247": "Dostępny 24/7",
+    "limitedHours": "Ograniczone godziny",
+    "paymentAvailable": "Płatność dostępna",
+    "easyAccess": "Strefa ułatwionego dostępu",
+    "descriptionHeader": "Opis lokalizacji",
+    "noImage": "Brak zdjęcia",
+    "searchPlaceholder": "Wpisz miasto lub ulicę...",
+    "deliveryOptions": "Opcje dostawy",
+    "easyAccessLabel": "Ułatwiony dostęp",
+    "easyAccessDesc": "Skrytki w dolnej części maszyny",
+    "paymentLabel": "Płatność kartą",
+    "paymentDesc": "Opłać paczkę w terminalu",
+    "available247Label": "Dostępny 24/7",
+    "available247Desc": "Odbieraj o dowolnej porze dnia i nocy",
+    "machineType": "Typ maszyny",
+    "typeAll": "Wszystkie",
+    "typeScreenless": "Bez ekranu (App)",
+    "typeModular": "Modułowy",
+    "typeNewFM": "Nowy typ (NewFM)",
+    "typeNext": "Next",
+    "placeNotFound": "Nie znaleziono miejsca",
+    "searchError": "Błąd podczas wyszukiwania miejsca",
+    "navigateButton": "Nawiguj"
+  }
+}

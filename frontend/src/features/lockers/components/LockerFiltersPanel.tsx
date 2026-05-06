@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {Loader2, Search} from "lucide-react";
+import { Loader2, Search, Globe } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { LockerFiltersState } from "../types";
-import {useGeocoding} from "@/hooks/useGeocoding.ts";
-import {useState} from "react";
+import { useGeocoding } from "@/hooks/useGeocoding.ts";
+import { useState } from "react";
 
 interface LockerFiltersPanelProps {
   filters: LockerFiltersState;
@@ -15,7 +16,7 @@ interface LockerFiltersPanelProps {
 }
 
 export function LockerFiltersPanel({ filters, onFiltersChange, onLocationSearch }: LockerFiltersPanelProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { searchAddress, isSearching, error } = useGeocoding();
   const [searchValue, setSearchValue] = useState("");
 
@@ -34,12 +35,29 @@ export function LockerFiltersPanel({ filters, onFiltersChange, onLocationSearch 
     }
   };
 
+  const toggleLanguage = () => {
+    const nextLang = i18n.language === 'pl' ? 'en' : 'pl';
+    i18n.changeLanguage(nextLang);
+  };
+
   return (
     <div className="flex flex-col gap-8 h-full pb-6">
-      <div>
-        <h1 className="text-2xl font-black tracking-tight text-zinc-900">{t("sidebar.title")}</h1>
-        <p className="text-sm text-zinc-500 mt-1">{t("sidebar.subtitle")}</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-zinc-900">{t("sidebar.title")}</h1>
+          <p className="text-sm text-zinc-500 mt-1">{t("sidebar.subtitle")}</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={toggleLanguage}
+          className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900"
+        >
+          <Globe className="w-4 h-4 mr-1.5" />
+          {i18n.language === 'pl' ? 'EN' : 'PL'}
+        </Button>
       </div>
+
       <div className="flex flex-col gap-1">
         <div className="relative shadow-sm">
           {isSearching ? (
