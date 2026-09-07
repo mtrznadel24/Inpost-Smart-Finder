@@ -2,8 +2,6 @@
 
 An interactive, high-performance web application designed to help users quickly find the best parcel locker for their specific needs, view its details, and navigate to it easily.
 
-**Live Demo:** https://smart-finder.mtrznadel.me/
-
 ---
 
 ## Problem Definition & Approach
